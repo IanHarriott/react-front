@@ -1,4 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
+import {
+	MDBNavbar,
+	MDBNavbarBrand,
+	MDBNavbarNav,
+	MDBNavItem,
+	MDBNavLink,
+	MDBNavbarToggler,
+	MDBCollapse,
+	MDBFormInline,
+	MDBDropdown,
+	MDBDropdownToggle,
+	MDBDropdownMenu,
+	MDBDropdownItem
+} from 'mdbreact';
 import { Link, withRouter } from 'react-router-dom';
 import { signout, isAuthenticated } from '../auth';
 
@@ -7,103 +21,115 @@ const isActive = (history, path) => {
 	else return { color: '#ffffff' };
 };
 
-const Menu = ({ history }) => (
-	<nav className='navbar navbar-expand-lg bg-primary'>
-		<button className='navbar-toggler' type='button'>
-			<span className='navbar-toggler-icon'></span>
-		</button>
-		<div className='collapse navbar-collapse'>
-			<ul className='navbar-nav mr-auto '>
-				<li className='nav-item'>
-					<Link
-						className='nav-link'
-						style={isActive(history, '/')}
-						to='/'>
-						Home
-					</Link>
-				</li>
-				<li className='nav-item'>
-					<Link
-						className='nav-link'
-						style={isActive(history, '/users')}
-						to='/users'>
-						Users
-					</Link>
-				</li>
-				{isAuthenticated() && (
-					<>
-						<li className='nav-item'>
-							<Link
-								className='nav-link'
-								style={isActive(history, '/findpeople')}
-								to='/findpeople'>
-								Find People
-							</Link>
-						</li>
-						<li className='nav-item'>
-							<Link
-								className='nav-link'
-								style={isActive(history, '/post/create')}
-								to='/post/create'>
-								Create Post
-							</Link>
-						</li>
-					</>
-				)}
-			</ul>
-			{!isAuthenticated() && (
-				<ul className='navbar-nav ml-auto'>
-					<li className='nav-item'>
-						<Link
-							className='nav-link'
-							style={isActive(history, '/signin')}
-							to='/signin'>
-							Sign In
-						</Link>
-					</li>
-					<li className='nav-item'>
-						<Link
-							className='nav-link'
-							style={isActive(history, '/signup')}
-							to='/signup'>
-							Sign Up
-						</Link>
-					</li>
-				</ul>
-			)}
+class Menu extends Component {
+	constructor() {
+		super();
+		this.state = { isOpen: false };
+	}
 
-			{isAuthenticated() && (
-				<ul className='navbar-nav ml-auto'>
-					<li className='nav-item'>
-						<Link
-							className='nav-link'
-							to={`/user/${isAuthenticated().user._id}`}
-							style={isActive(
-								history,
-								`/user/${isAuthenticated().user._id}`
-							)}>
-							{`${isAuthenticated().user.name}'s profile`}
-						</Link>
-					</li>
-					<li className='nav-item'>
-						<span
-							className='nav-link'
-							style={
-								(isActive(history, '/signup'),
-								{ cursor: 'pointer', color: '#fff' })
-							}
-							onClick={() =>
-								signout(() => {
-									history.push('/');
-								})
-							}>
-							Sign Out
-						</span>
-					</li>
-				</ul>
-			)}
-		</div>
-	</nav>
-);
+	toggleCollapse = () => {
+		this.setState({ isOpen: !this.state.isOpen });
+	};
+
+	render() {
+		const { history } = this.props;
+		return (
+			<MDBNavbar color='elegant-color-dark' expand='md'>
+				<MDBNavbarToggler onClick={this.toggleCollapse} />
+				<MDBCollapse isOpen={this.state.isOpen} navbar>
+					<MDBNavbarNav left>
+						<MDBNavItem>
+							<MDBNavLink to={'/'} style={isActive(history, '/')}>
+								Home
+							</MDBNavLink>
+						</MDBNavItem>
+						<MDBNavItem>
+							<MDBNavLink
+								to={'/users'}
+								style={isActive(history, '/users')}>
+								Users
+							</MDBNavLink>
+						</MDBNavItem>
+						{isAuthenticated() && (
+							<>
+								<MDBNavItem>
+									<MDBNavLink
+										to={'/findpeople'}
+										style={isActive(
+											history,
+											'/findpeople'
+										)}>
+										Find People
+									</MDBNavLink>
+								</MDBNavItem>
+								<MDBNavItem>
+									<MDBNavLink
+										to={'/post/create'}
+										style={isActive(
+											history,
+											'/post/create'
+										)}>
+										Create Post
+									</MDBNavLink>
+								</MDBNavItem>
+							</>
+						)}
+					</MDBNavbarNav>
+					<MDBNavbarNav right>
+						{isAuthenticated() ? (
+							<>
+								<MDBNavItem>
+									<MDBNavLink
+										to={`/user/${
+											isAuthenticated().user._id
+										}`}
+										style={isActive(
+											history,
+											`/user/${
+												isAuthenticated().user._id
+											}`
+										)}>
+										{`${
+											isAuthenticated().user.name
+										}'s profile`}
+									</MDBNavLink>
+								</MDBNavItem>
+								<MDBNavItem>
+									<MDBNavLink
+										to={'/signup'}
+										style={{ color: 'white' }}
+										onClick={() =>
+											signout(() => {
+												history.push('/');
+											})
+										}>
+										Sign Out
+									</MDBNavLink>
+								</MDBNavItem>
+							</>
+						) : (
+							<>
+								<MDBNavItem>
+									<MDBNavLink
+										to={'/signin'}
+										style={isActive(history, '/signin')}>
+										Sign In
+									</MDBNavLink>
+								</MDBNavItem>
+								<MDBNavItem>
+									<MDBNavLink
+										to={'/signup'}
+										style={isActive(history, '/signup')}>
+										Sign Up
+									</MDBNavLink>
+								</MDBNavItem>
+							</>
+						)}
+					</MDBNavbarNav>
+				</MDBCollapse>
+			</MDBNavbar>
+		);
+	}
+}
 
 export default withRouter(Menu);

@@ -53,6 +53,7 @@ class EditProfile extends Component {
 			this.setState({ error: 'Name is required' });
 			return false;
 		}
+		// eslint-disable-next-line
 		if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
 			this.setState({ error: 'A valid email is required' });
 			return false;
