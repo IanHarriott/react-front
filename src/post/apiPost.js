@@ -14,7 +14,8 @@ export const create = (userId, token, post) => {
 };
 
 export const list = () => {
-	console.log('inside list')
+	console.log(`${process.env.REACT_APP_API_URL}`);
+	console.log('inside list');
 	return fetch(`${process.env.REACT_APP_API_URL}/posts`, {
 		method: 'GET'
 	})
